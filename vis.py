@@ -29,17 +29,18 @@ bg_img = np.linspace(250, 200, 128).astype(int)
 bg_img = repeat(bg_img, 'n -> n 128 3')
 
 class Viewer:
-    def __init__(self, render_folder='renderings/renders/ab7d054fee3746c0b0c048838cedd91b'):
+    def __init__(self, render_folder='renderings/renders/ab7d054fee3746c0b0c048838cedd91b', transform_file='transforms_gt.json'):
         self.server = viser.ViserServer()
         self.server.scene.set_background_image(bg_img)
         self.server.scene.set_up_direction('-y')
         self.render_folder = render_folder
+        self.transform_file = transform_file
         self._init_ui()
         self.draw_frame()
 
     def _init_ui(self):
         # Load transforms.json to get number of frames
-        json_path = os.path.join(self.render_folder, 'transforms.json')
+        json_path = os.path.join(self.render_folder, self.transform_file)
         with open(json_path, 'r') as f:
             self.transforms_info = json.load(f)
         self.num_frames = len(self.transforms_info['frames'])
@@ -102,7 +103,7 @@ class Viewer:
             )
 
         # Display camera frustums with images (no depth visualization)
-        for i, frame in enumerate(self.transforms_info['frames'][::10]):
+        for i, frame in enumerate(self.transforms_info['frames'][::]):
             file_path = frame['file_path']
             idx = file_path.replace('.png', '')
             img_path = os.path.join(self.render_folder, file_path)
@@ -140,5 +141,17 @@ class Viewer:
 
 
 if __name__ == '__main__':
-    viewer = Viewer(render_folder='renderings/renders/5f62800c792d47a5a11677afa4d1020c/' )#'renderings/renders/c871c724955a46c1a50d4cae3ef3f1ee/')
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Visualize renders with camera frustums')
+    parser.add_argument('--render_folder', type=str,
+                        default='dataset/active_sampling/5220317ab5515f6c70a0ade1d25f5a02b25c61ffa095b109fa9a22965d02f488_gt/',
+                        help='Path to the render folder containing images and transforms')
+    parser.add_argument('--transform_file', type=str,
+                        default='transforms_gt.json',
+                        help='Name of the transforms file (e.g., transforms_gt.json)')
+
+    args = parser.parse_args()
+
+    viewer = Viewer(render_folder=args.render_folder, transform_file=args.transform_file)
     input('Press Enter to quit')
