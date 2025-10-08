@@ -103,7 +103,7 @@ class Viewer:
             )
 
         # Display camera frustums with images (no depth visualization)
-        for i, frame in enumerate(self.transforms_info['frames'][::]):
+        for i, frame in enumerate(self.transforms_info['frames'][:-1]):
             file_path = frame['file_path']
             idx = file_path.replace('.png', '')
             img_path = os.path.join(self.render_folder, file_path)
@@ -138,6 +138,8 @@ class Viewer:
                     wxyz=wxyz, position=position,
                     scale=0.15
                 )
+                self.server.scene.add_frame(f"/frame_{i}", wxyz=wxyz, position=position, axes_length=0.1, axes_radius=0.01)
+                self.server.scene.add_label(f"/frame_{i}/label", text=f"Frame {i}")
 
 
 if __name__ == '__main__':
