@@ -103,7 +103,7 @@ class Viewer:
             )
 
         # Display camera frustums with images (no depth visualization)
-        for i, frame in enumerate(self.transforms_info['frames'][:-1]):
+        for i, frame in enumerate(self.transforms_info['frames']):
             file_path = frame['file_path']
             idx = file_path.replace('.png', '')
             img_path = os.path.join(self.render_folder, file_path)
@@ -129,7 +129,8 @@ class Viewer:
             ### </convert coordinate system >
 
             # Only show camera frustum for current frame or all frames
-            if i == self.current_frame_id or True:
+            # if i == self.current_frame_id or True:
+            if True:
                 # Highlight current camera
                 self.server.scene.add_camera_frustum(
                     f'/cam_{idx}',
@@ -139,7 +140,7 @@ class Viewer:
                     scale=0.15
                 )
                 self.server.scene.add_frame(f"/frame_{i}", wxyz=wxyz, position=position, axes_length=0.1, axes_radius=0.01)
-                self.server.scene.add_label(f"/frame_{i}/label", text=f"Frame {i}")
+                self.server.scene.add_label(f"/frame_{i}/label", text=f"Frame {idx}")
 
 
 if __name__ == '__main__':
